@@ -22,7 +22,7 @@ namespace ImGuiNET.Unity
     /// </summary>
     public class DearImGui : MonoBehaviour
     {
-        public ref CursorShape this[ImGuiMouseCursor cursor]
+        internal ref CursorShape this[ImGuiMouseCursor cursor]
         {
             get
             {
@@ -49,28 +49,29 @@ namespace ImGuiNET.Unity
         bool _usingURP;
 
         public event System.Action Layout;  // Layout event for *this* ImGui instance
-        [SerializeField] bool _doGlobalLayout = true; // do global/default Layout event too
+        public bool _doGlobalLayout = true; // do global/default Layout event too
 
-        [SerializeField] Camera _camera = null;
-        [SerializeField] RenderImGuiFeature _renderFeature = null;
+        public Camera _camera = null;
+        public RenderImGuiFeature _renderFeature = null;
 
-        [SerializeField] RenderUtils.RenderType _rendererType = RenderUtils.RenderType.Mesh;
-        [SerializeField] Platform.Type _platformType = Platform.Type.InputManager;
+        public RenderType _rendererType = RenderType.Mesh;
+        public PlatformType _platformType = PlatformType.InputManager;
 
         [Header("Configuration")]
-        [SerializeField] IOConfig _initialConfiguration = default;
+        public IOConfig _initialConfiguration = default;
         [SerializeField] FontAtlasConfigAsset _fontAtlasConfiguration = null;
         [SerializeField] IniSettingsAsset _iniSettings = null;  // null: uses default imgui.ini file
 
         [Header("Customization")]
-        public Shader mesh;
-        public Shader procedural;
-        public string tex;
-        public string vertices;
-        public string baseVertex;
+        [SerializeField] internal Shader mesh;
+        [SerializeField] internal Shader procedural;
+        [SerializeField] internal string tex;
+        [SerializeField] internal string vertices;
+        [SerializeField] internal string baseVertex;
 
-        [SerializeField] StyleAsset _style = null; [Tooltip("Default.")]
+        [SerializeField] StyleAsset _style = null; 
 
+        [Tooltip("Default.")]
         public CursorShape Arrow;
         [Tooltip("When hovering over InputText, etc.")]
         public CursorShape TextInput;
@@ -97,9 +98,7 @@ namespace ImGuiNET.Unity
         void Awake()
         {
             _context = ImGuiUn.CreateUnityContext();
-
-            // Arti addon
-            _camera = Camera.main;
+            Reset();
         }
 
         void OnDestroy()

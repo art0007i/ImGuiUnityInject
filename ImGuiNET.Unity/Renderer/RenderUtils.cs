@@ -6,13 +6,14 @@ using UnityEngine.Rendering.Universal;
 
 namespace ImGuiNET.Unity
 {
+    public enum RenderType
+    {
+        Mesh = 0,
+        Procedural = 1,
+    }
+
     static class RenderUtils
     {
-        public enum RenderType
-        {
-            Mesh = 0,
-            Procedural = 1,
-        }
 
         public static IImGuiRenderer Create(RenderType type, DearImGui shaders, TextureManager textures)
         {

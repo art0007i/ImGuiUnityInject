@@ -2,33 +2,33 @@
 
 namespace ImGuiNET.Unity
 {
+    public enum PlatformType
+    {
+        InputManager = 0,
+        InputSystem = 1,
+    }
+
     static class Platform
     {
-        public enum Type
-        {
-            InputManager = 0,
-            InputSystem = 1,
-        }
-
-        public static bool IsAvailable(Type type)
+        public static bool IsAvailable(PlatformType type)
         {
             switch (type)
             {
-                case Type.InputManager: return true;
+                case PlatformType.InputManager: return true;
 #if HAS_INPUTSYSTEM
-                case Type.InputSystem: return true;
+                case PlatformType.InputSystem: return true;
 #endif
                 default: return false;
             }
         }
 
-        public static IImGuiPlatform Create(Type type, DearImGui cursors, IniSettingsAsset iniSettings)
+        public static IImGuiPlatform Create(PlatformType type, DearImGui cursors, IniSettingsAsset iniSettings)
         {
             switch (type)
             {
-                case Type.InputManager: return new ImGuiPlatformInputManager(cursors, iniSettings);
+                case PlatformType.InputManager: return new ImGuiPlatformInputManager(cursors, iniSettings);
 #if HAS_INPUTSYSTEM
-                case Type.InputSystem: return new ImGuiPlatformInputSystem(cursors, iniSettings);
+                case PlatformType.InputSystem: return new ImGuiPlatformInputSystem(cursors, iniSettings);
 #endif
                 default:
                     Debug.LogError($"[DearImGui] {type} platform not available.");

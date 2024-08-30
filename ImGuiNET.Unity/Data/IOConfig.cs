@@ -3,7 +3,7 @@ using UnityEngine;
 namespace ImGuiNET.Unity
 {
     [System.Serializable]
-    struct IOConfig
+    public struct IOConfig
     {
         [Tooltip("Enable keyboard navigation.")]
         public bool KeyboardNavigation;
