@@ -20,9 +20,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-		<Reference Include="UnityEngine">
-			<HintPath>./ManagedLibs/UnityEngine.dll</HintPath>
-		</Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>./ManagedLibs/UnityEngine.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>./ManagedLibs/UnityEngine.CoreModule.dll</HintPath>
     </Reference>
