@@ -3,28 +3,34 @@ using UnityEngine;
 
 namespace ImGuiUnityInject;
 
-public class ImGuiUnityInjector : MonoBehaviour
+public static class ImGuiUnityInjector
 {
     public static void EnsureExists()
     {
         var obj = new GameObject("ImGuiUnityInject");
-        DontDestroyOnLoad(obj);
-        _instance = obj.AddComponent<ImGuiUnityInjector>();
+        Object.DontDestroyOnLoad(obj);
+        _instance = obj.AddComponent<ImGuiUnityInjectorScript>();
     }
 
-    private static ImGuiUnityInjector _instance;
-    public static ImGuiUnityInjector Instance {
-        get { 
-            if (_instance == null) {
+    internal static ImGuiUnityInjectorScript _instance;
+    public static ImGuiUnityInjectorScript Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
                 EnsureExists();
             }
             return _instance;
         }
     }
+}
 
+public class ImGuiUnityInjectorScript : MonoBehaviour
+{
     void Start()
     {
-        _instance = this;
+        ImGuiUnityInjector._instance = this;
         StartCoroutine(LoadBundle());
     }
     IEnumerator LoadBundle()
