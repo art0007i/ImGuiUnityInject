@@ -4,14 +4,15 @@ An edit of [realgamessoftware/dear-imgui-unity](https://github.com/realgamessoft
 
 It uses an asset bundle to load the shaders and cursor textures.
 
-# Usage
+# Usage for modders
 
-1. Reference ImGuiUnityInject.dll in your project.
-2. Ensure the injector instance exists.
+1. Add the dlls from [./Plugins](./Plugins) to the `Game_Data/Plugins/x86_64` folder of the game you are modding
+2. Reference `ImGuiUnityInject.dll` in your project.
+3. Ensure the injector instance exists.
 ```cs
 ImGuiUnityInjector.EnsureExists();
 ```
-3. Run your ImGui code by subscribing to the global layout event.
+4. Run your ImGui code by subscribing to the global layout event.
 ```cs
 ImGuiUn.Layout += () => {
     ImGui.ShowDemoWindow();
