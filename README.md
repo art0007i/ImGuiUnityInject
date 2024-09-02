@@ -7,7 +7,7 @@ It uses an asset bundle to load the shaders and cursor textures.
 # Usage for modders
 
 Add the dlls from [./Plugins](./Plugins) to the `Game_Data/Plugins/x86_64` folder of the game you are modding.
-Everyone who downloads your mod will need to do this step as well.
+Everyone who downloads your mod will need to do this step as well. This is slightly annoying but I don't know of a better way to do it.
 
 Simple Example:
 ```cs
