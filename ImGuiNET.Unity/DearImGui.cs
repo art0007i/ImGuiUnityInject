@@ -69,26 +69,44 @@ namespace ImGuiNET.Unity
         [SerializeField] internal string vertices;
         [SerializeField] internal string baseVertex;
 
-        [SerializeField] StyleAsset _style = null; 
+        [SerializeField] StyleAsset _style = null;
 
-        [Tooltip("Default.")]
-        public CursorShape Arrow;
-        [Tooltip("When hovering over InputText, etc.")]
-        public CursorShape TextInput;
-        [Tooltip("(Unused by ImGui functions)")]
-        public CursorShape ResizeAll;
-        [Tooltip("When hovering over an horizontal border")]
-        public CursorShape ResizeEW;
-        [Tooltip("When hovering over a vertical border or column")]
-        public CursorShape ResizeNS;
-        [Tooltip("When hovering over the bottom-left corner of a window")]
-        public CursorShape ResizeNESW;
-        [Tooltip("When hovering over the bottom-right corner of a window")]
-        public CursorShape ResizeNWSE;
-        [Tooltip("(Unused by ImGui functions. Use for e.g. hyperlinks)")]
-        public CursorShape Hand;
-        [Tooltip("When hovering something with disabled interaction. Usually a crossed circle.")]
-        public CursorShape NotAllowed;
+        private CursorShape Arrow;
+        private CursorShape TextInput;
+        private CursorShape ResizeAll;
+        private CursorShape ResizeEW;
+        private CursorShape ResizeNS;
+        private CursorShape ResizeNESW;
+        private CursorShape ResizeNWSE;
+        private CursorShape Hand;
+        private CursorShape NotAllowed;
+        
+        public Texture2D Arrow_texture;
+        public Vector2 Arrow_hotspot;
+
+        public Texture2D TextInput_texture;
+        public Vector2 TextInput_hotspot;
+
+        public Texture2D ResizeAll_texture;
+        public Vector2 ResizeAll_hotspot;
+
+        public Texture2D ResizeEW_texture;
+        public Vector2 ResizeEW_hotspot;
+
+        public Texture2D ResizeNS_texture;
+        public Vector2 ResizeNS_hotspot;
+
+        public Texture2D ResizeNESW_texture;
+        public Vector2 ResizeNESW_hotspot;
+
+        public Texture2D ResizeNWSE_texture;
+        public Vector2 ResizeNWSE_hotspot;
+
+        public Texture2D Hand_texture;
+        public Vector2 Hand_hotspot;
+
+        public Texture2D NotAllowed_texture;
+        public Vector2 NotAllowed_hotspot;
 
         const string CommandBufferTag = "DearImGui";
         static readonly ProfilerMarker s_prepareFramePerfMarker = new ProfilerMarker("DearImGui.PrepareFrame");
@@ -108,6 +126,16 @@ namespace ImGuiNET.Unity
 
         void OnEnable()
         {
+            Arrow = new CursorShape { texture = Arrow_texture, hotspot = Arrow_hotspot };
+            TextInput = new CursorShape { texture = TextInput_texture, hotspot = TextInput_hotspot };
+            ResizeAll = new CursorShape { texture = ResizeAll_texture, hotspot = ResizeAll_hotspot };
+            ResizeEW = new CursorShape { texture = ResizeEW_texture, hotspot = ResizeEW_hotspot };
+            ResizeNS = new CursorShape { texture = ResizeNS_texture, hotspot = ResizeNS_hotspot };
+            ResizeNESW = new CursorShape { texture = ResizeNESW_texture, hotspot = ResizeNESW_hotspot };
+            ResizeNWSE = new CursorShape { texture = ResizeNWSE_texture, hotspot = ResizeNWSE_hotspot };
+            Hand = new CursorShape { texture = Hand_texture, hotspot = Hand_hotspot };
+            NotAllowed = new CursorShape { texture = NotAllowed_texture, hotspot = NotAllowed_hotspot };
+
             _usingURP = RenderUtils.IsUsingURP();
             if (_camera == null) Fail(nameof(_camera));
             if (_renderFeature == null && _usingURP) Fail(nameof(_renderFeature));

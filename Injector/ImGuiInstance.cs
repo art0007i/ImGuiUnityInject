@@ -51,7 +51,7 @@ public class ImGuiInstance
             
             if(onReady != null) onReady(gui, true);
             else gui.enabled = true;
-            instance._imGuiAvailable(gui);
+            if(instance._imGuiAvailable != null) instance._imGuiAvailable(gui);
         });
         return instance;
     }
