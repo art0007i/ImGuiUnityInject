@@ -16,9 +16,13 @@
     <DebugType Condition="'$(Configuration)'=='Release'">None</DebugType>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-    <DefineConstants>HAS_INPUTSYSTEM;IMGUI_FEATURE_CUSTOM_ASSERT;IMGUI_FEATURE_FREETYPE</DefineConstants>
+    <DefineConstants>HAS_INPUTSYSTEM;IMGUI_FEATURE_CUSTOM_ASSERT</DefineConstants>
   </PropertyGroup>
-
+	<!--
+  <ItemGroup>
+    <PackageReference Include="ImGui.NET" Version="1.91.0.1" />
+  </ItemGroup>
+-->
   <ItemGroup>
     <Reference Include="UnityEngine">
       <HintPath>./ManagedLibs/UnityEngine.dll</HintPath>

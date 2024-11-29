@@ -65,12 +65,13 @@ namespace ImGuiNET.Unity
             im.OversampleH = Oversample.x;
             im.OversampleV = Oversample.y;
             im.PixelSnapH = PixelSnapH;
-            im.GlyphExtraSpacing = GlyphExtraSpacing;
-            im.GlyphOffset = GlyphOffset;
+            im.GlyphExtraSpacing = GlyphExtraSpacing.ToNumerics();
+            im.GlyphOffset = GlyphOffset.ToNumerics();
             im.GlyphMinAdvanceX = GlyphMinAdvanceX;
             im.GlyphMaxAdvanceX = GlyphMaxAdvanceX;
             im.MergeMode = MergeIntoPrevious;
-            im.RasterizerFlags = RasterizerFlags;
+            //im.RasterizerFlags = RasterizerFlags;
+            // TODO: add things from https://github.com/ocornut/imgui/blob/master/imgui.h#L3224
             im.RasterizerMultiply = RasterizerMultiply;
             im.EllipsisChar = EllipsisChar;
 
@@ -85,12 +86,12 @@ namespace ImGuiNET.Unity
             SizeInPixels = im.SizePixels;
             Oversample = new Vector2Int(im.OversampleH, im.OversampleV);
             PixelSnapH = im.PixelSnapH;
-            GlyphExtraSpacing = im.GlyphExtraSpacing;
-            GlyphOffset = im.GlyphOffset;
+            GlyphExtraSpacing = im.GlyphExtraSpacing.ToUnity();
+            GlyphOffset = im.GlyphOffset.ToUnity();
             GlyphMinAdvanceX = im.GlyphMinAdvanceX;
             GlyphMaxAdvanceX = im.GlyphMaxAdvanceX;
             MergeIntoPrevious = im.MergeMode;
-            RasterizerFlags = im.RasterizerFlags;
+            //RasterizerFlags = im.RasterizerFlags;
             RasterizerMultiply = im.RasterizerMultiply;
             EllipsisChar = (char)im.EllipsisChar;
 

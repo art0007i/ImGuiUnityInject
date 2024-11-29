@@ -47,7 +47,7 @@ namespace ImGuiNET.Unity
         {
             io.SetClipboardTextFn = Marshal.GetFunctionPointerForDelegate(_setClipboardText);
             io.GetClipboardTextFn = Marshal.GetFunctionPointerForDelegate(_getClipboardText);
-            io.ImeSetInputScreenPosFn = Marshal.GetFunctionPointerForDelegate(_imeSetInputScreenPos);
+            //io.ImeSetInputScreenPosFn = Marshal.GetFunctionPointerForDelegate(_imeSetInputScreenPos);
 #if IMGUI_FEATURE_CUSTOM_ASSERT
             io.SetBackendPlatformUserData<CustomAssertData>(new CustomAssertData
             {
@@ -61,7 +61,7 @@ namespace ImGuiNET.Unity
         {
             io.SetClipboardTextFn = IntPtr.Zero;
             io.GetClipboardTextFn = IntPtr.Zero;
-            io.ImeSetInputScreenPosFn = IntPtr.Zero;
+            //io.ImeSetInputScreenPosFn = IntPtr.Zero;
 #if IMGUI_FEATURE_CUSTOM_ASSERT
             io.SetBackendPlatformUserData<CustomAssertData>(null);
 #endif
@@ -81,7 +81,7 @@ namespace ImGuiNET.Unity
         {
             set => _setClipboardText = (user_data, text) =>
             {
-                try { value(new IntPtr(user_data), Util.StringFromPtr(text)); }
+                try { value(new IntPtr(user_data), Utils.StringFromPtr(text)); }
                 catch (Exception ex) { Debug.LogException(ex); }
             };
         }
@@ -100,7 +100,7 @@ namespace ImGuiNET.Unity
         {
             set => _logAssert = (condition, file, line) =>
             {
-                try { value(Util.StringFromPtr(condition), Util.StringFromPtr(file), line); }
+                try { value(Utils.StringFromPtr(condition), Utils.StringFromPtr(file), line); }
                 catch (Exception ex) { Debug.LogException(ex); }
             };
         }

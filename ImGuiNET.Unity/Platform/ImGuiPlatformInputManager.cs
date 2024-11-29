@@ -17,7 +17,7 @@ namespace ImGuiNET.Unity
     /// </summary>
     sealed class ImGuiPlatformInputManager : IImGuiPlatform
     {
-        int[] _mainKeys;                                                        // main keys
+        KeyCode[] _allKeys = (KeyCode[])Enum.GetValues(typeof(KeyCode));        // main keys
         readonly Event _e = new Event();                                        // to get text input
 
         readonly DearImGui _cursorShapes;                               // cursor shape definitions
@@ -42,7 +42,7 @@ namespace ImGuiNET.Unity
             _callbacks.ImeSetInputScreenPos = (x, y) => Input.compositionCursorPos = new Vector2(x, y);
         }
 
-        public bool Initialize(ImGuiIOPtr io)
+        public unsafe bool Initialize(ImGuiIOPtr io)
         {
             io.SetBackendPlatformName("Unity Input Manager");                   // setup backend info and capabilities
             io.BackendFlags |= ImGuiBackendFlags.HasMouseCursors;               // can honor GetMouseCursor() values
@@ -58,8 +58,6 @@ namespace ImGuiNET.Unity
                 ImGui.LoadIniSettingsFromMemory(_iniSettings.Load());           // call after CreateContext(), before first call to NewFrame()
             }
 
-            SetupKeyboard(io);                                                  // sets key mapping, text input, and IME
-
             return true;
         }
 
@@ -73,7 +71,7 @@ namespace ImGuiNET.Unity
         {
             Assert.IsTrue(io.Fonts.IsBuilt(), "Font atlas not built! Generally built by the renderer. Missing call to renderer NewFrame() function?");
 
-            io.DisplaySize = new Vector2(displayRect.width, displayRect.height);// setup display size (every frame to accommodate for window resizing)
+            io.DisplaySize = new System.Numerics.Vector2(displayRect.width, displayRect.height);// setup display size (every frame to accommodate for window resizing)
             // TODO: dpi aware, scale, etc
 
             io.DeltaTime = Time.unscaledDeltaTime;                              // setup timestep
@@ -91,47 +89,15 @@ namespace ImGuiNET.Unity
             }
         }
 
-        void SetupKeyboard(ImGuiIOPtr io)
-        {
-            _mainKeys = new int[] {
-                // map and store new keys by assigning io.KeyMap and setting value of array
-                io.KeyMap[(int)ImGuiKey.Tab        ] = (int)KeyCode.Tab,
-                io.KeyMap[(int)ImGuiKey.LeftArrow  ] = (int)KeyCode.LeftArrow,
-                io.KeyMap[(int)ImGuiKey.RightArrow ] = (int)KeyCode.RightArrow,
-                io.KeyMap[(int)ImGuiKey.UpArrow    ] = (int)KeyCode.UpArrow,
-                io.KeyMap[(int)ImGuiKey.DownArrow  ] = (int)KeyCode.DownArrow,
-                io.KeyMap[(int)ImGuiKey.PageUp     ] = (int)KeyCode.PageUp,
-                io.KeyMap[(int)ImGuiKey.PageDown   ] = (int)KeyCode.PageDown,
-                io.KeyMap[(int)ImGuiKey.Home       ] = (int)KeyCode.Home,
-                io.KeyMap[(int)ImGuiKey.End        ] = (int)KeyCode.End,
-                io.KeyMap[(int)ImGuiKey.Insert     ] = (int)KeyCode.Insert,
-                io.KeyMap[(int)ImGuiKey.Delete     ] = (int)KeyCode.Delete,
-                io.KeyMap[(int)ImGuiKey.Backspace  ] = (int)KeyCode.Backspace,
-                io.KeyMap[(int)ImGuiKey.Space      ] = (int)KeyCode.Space,
-                io.KeyMap[(int)ImGuiKey.Enter      ] = (int)KeyCode.Return,
-                io.KeyMap[(int)ImGuiKey.Escape     ] = (int)KeyCode.Escape,
-                io.KeyMap[(int)ImGuiKey.KeyPadEnter] = (int)KeyCode.KeypadEnter,
-                io.KeyMap[(int)ImGuiKey.A          ] = (int)KeyCode.A,           // for text edit CTRL+A: select all
-                io.KeyMap[(int)ImGuiKey.C          ] = (int)KeyCode.C,           // for text edit CTRL+C: copy
-                io.KeyMap[(int)ImGuiKey.V          ] = (int)KeyCode.V,           // for text edit CTRL+V: paste
-                io.KeyMap[(int)ImGuiKey.X          ] = (int)KeyCode.X,           // for text edit CTRL+X: cut
-                io.KeyMap[(int)ImGuiKey.Y          ] = (int)KeyCode.Y,           // for text edit CTRL+Y: redo
-                io.KeyMap[(int)ImGuiKey.Z          ] = (int)KeyCode.Z,           // for text edit CTRL+Z: undo
-            };
-        }
-
         void UpdateKeyboard(ImGuiIOPtr io)
         {
-            // main keys
-            foreach (var key in _mainKeys)
-                io.KeysDown[key] = Input.GetKey((KeyCode)key);
-
-            // keyboard modifiers
-            io.KeyShift = Input.GetKey(KeyCode.LeftShift  ) || Input.GetKey(KeyCode.RightShift  );
-            io.KeyCtrl  = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
-            io.KeyAlt   = Input.GetKey(KeyCode.LeftAlt    ) || Input.GetKey(KeyCode.RightAlt    );
-            io.KeySuper = Input.GetKey(KeyCode.LeftCommand) || Input.GetKey(KeyCode.RightCommand)
-                       || Input.GetKey(KeyCode.LeftWindows) || Input.GetKey(KeyCode.RightWindows);
+            foreach (var key in _allKeys)
+            {
+                if (TryMapKeys(key, out ImGuiKey imguikey))
+                {
+                    io.AddKeyEvent(imguikey, Input.GetKey(key));
+                }
+            }
 
             // text input
             while (Event.PopEvent(_e))
@@ -165,6 +131,110 @@ namespace ImGuiNET.Unity
             Cursor.visible = cursor != ImGuiMouseCursor.None;                   // hide cursor if ImGui is drawing it or if it wants no cursor
             if (_cursorShapes != null)
                 Cursor.SetCursor(_cursorShapes[cursor].texture, _cursorShapes[cursor].hotspot, CursorMode.Auto);
+        }
+
+        static bool TryMapKeys(KeyCode key, out ImGuiKey imguikey)
+        {
+            //Special case not handed in the switch...
+            //If the actual key we put in is "None", return none and true. 
+            //otherwise, return none and false.
+            if (key == KeyCode.None)
+            {
+                imguikey = ImGuiKey.None;
+                return true;
+            }
+            imguikey = key switch
+            {
+                KeyCode.Backspace => ImGuiKey.Backspace,
+                KeyCode.Delete => ImGuiKey.Delete,
+                KeyCode.Tab => ImGuiKey.Tab,
+                //KeyCode.Clear
+                KeyCode.Return => ImGuiKey.Enter,
+                KeyCode.Pause => ImGuiKey.Pause,
+                KeyCode.Escape => ImGuiKey.Escape,
+                KeyCode.Space => ImGuiKey.Space,
+                >= KeyCode.Keypad0 and <= KeyCode.KeypadEquals => ImGuiKey.Keypad0 + (key - KeyCode.Keypad0),
+                KeyCode.UpArrow => ImGuiKey.UpArrow,
+                KeyCode.DownArrow => ImGuiKey.DownArrow,
+                KeyCode.RightArrow => ImGuiKey.RightArrow,
+                KeyCode.LeftArrow => ImGuiKey.LeftArrow,
+                KeyCode.Insert => ImGuiKey.Insert,
+                KeyCode.Home => ImGuiKey.Home,
+                KeyCode.End => ImGuiKey.End,
+                KeyCode.PageUp => ImGuiKey.PageUp,
+                KeyCode.PageDown => ImGuiKey.PageDown,
+                >= KeyCode.F1 and <= KeyCode.F15 => ImGuiKey.F1 + (key - KeyCode.F1),
+                >= KeyCode.Alpha0 and <= KeyCode.Alpha9 => ImGuiKey._1 + (key - KeyCode.Alpha0),
+                // KeyCode.Exclaim => ImGuiKey._1,
+                // KeyCode.DoubleQuote => ImGuiKey.Apostrophe,
+                // KeyCode.Hash => ImGuiKey._3,
+                // KeyCode.Dollar => ImGuiKey._4,
+                // KeyCode.Percent => ImGuiKey._5,
+                // KeyCode.Ampersand => ImGuiKey._7,
+                KeyCode.Quote => ImGuiKey.Apostrophe,
+                // KeyCode.LeftParen => ImGuiKey._9,
+                // KeyCode.RightParen => ImGuiKey._0,
+                // KeyCode.Asterisk => ImGuiKey._8,
+                // KeyCode.Plus => ImGuiKey.Equal,
+                KeyCode.Comma => ImGuiKey.Comma,
+                KeyCode.Minus => ImGuiKey.Minus,
+                KeyCode.Period => ImGuiKey.Period,
+                KeyCode.Slash => ImGuiKey.Slash,
+                // KeyCode.Colon => ImGuiKey.Semicolon,
+                KeyCode.Semicolon => ImGuiKey.Semicolon,
+                // KeyCode.Less => ImGuiKey.Comma,
+                KeyCode.Equals => ImGuiKey.Equal,
+                // KeyCode.Greater => ImGuiKey.Period,
+                // KeyCode.Question => ImGuiKey.Slash,
+                // KeyCode.At => ImGuiKey._2,
+                KeyCode.LeftBracket => ImGuiKey.LeftBracket,
+                KeyCode.Backslash => ImGuiKey.Backslash,
+                KeyCode.RightBracket => ImGuiKey.RightBracket,
+                // KeyCode.Caret => ImGuiKey._6,
+                // KeyCode.Underscore => ImGuiKey.Minus,
+                KeyCode.BackQuote => ImGuiKey.GraveAccent,
+                >= KeyCode.A and <= KeyCode.Z => ImGuiKey.A + (key - KeyCode.A),
+                // KeyCode.LeftCurlyBracket => ImGuiKey.LeftBracket,
+                // KeyCode.Pipe => ImGuiKey.Backslash,
+                // KeyCode.RightCurlyBracket => ImGuiKey.RightBracket,
+                // KeyCode.Tilde => ImGuiKey.GraveAccent,
+                KeyCode.Numlock => ImGuiKey.NumLock,
+                KeyCode.CapsLock => ImGuiKey.CapsLock,
+                KeyCode.ScrollLock => ImGuiKey.ScrollLock,
+                KeyCode.RightShift => ImGuiKey.ModShift,
+                KeyCode.LeftShift => ImGuiKey.ModShift,
+                // KeyCode.RightShift => ImGuiKey.RightShift,
+                // KeyCode.LeftShift => ImGuiKey.LeftShift,  // Map to actual shift keys?
+                KeyCode.RightControl => ImGuiKey.ModCtrl,
+                KeyCode.LeftControl => ImGuiKey.ModCtrl,
+                // KeyCode.RightControl => ImGuiKey.RightCtrl,
+                // KeyCode.LeftControl => ImGuiKey.LeftCtrl,
+                KeyCode.RightAlt => ImGuiKey.ModAlt,
+                KeyCode.LeftAlt => ImGuiKey.ModAlt,
+                // KeyCode.RightAlt => ImGuiKey.RightAlt,
+                // KeyCode.LeftAlt => ImGuiKey.LeftAlt,
+                KeyCode.LeftCommand => ImGuiKey.ModSuper,
+                KeyCode.LeftWindows => ImGuiKey.ModSuper,
+                KeyCode.RightCommand => ImGuiKey.ModSuper,
+                KeyCode.RightWindows => ImGuiKey.ModSuper,
+                // KeyCode.LeftCommand => ImGuiKey.LeftSuper,
+                // KeyCode.LeftWindows => ImGuiKey.LeftSuper,
+                // KeyCode.RightCommand => ImGuiKey.RightSuper,
+                // KeyCode.RightWindows => ImGuiKey.RightSuper,
+                // KeyCode.AltGr // no one likes u alt gr
+                // KeyCode.Help
+                KeyCode.Print => ImGuiKey.PrintScreen,
+                // KeyCode.SysReq => ImGuiKey.PrintScreen,
+                // KeyCode.Break => ImGuiKey.Pause,
+                KeyCode.Menu => ImGuiKey.Menu,
+                
+                // Mouse 'keys'
+                // Joystick 'keys'
+
+                _ => ImGuiKey.None,
+            };
+
+            return imguikey != ImGuiKey.None;
         }
     }
 }

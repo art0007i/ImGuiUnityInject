@@ -5,6 +5,7 @@ namespace ImGuiNET.Unity
     [CreateAssetMenu(menuName = "Dear ImGui/Style")]
     sealed class StyleAsset : ScriptableObject
     {
+        // TODO: double check if we have everything https://github.com/ocornut/imgui/blob/master/imgui.h#L2120
         [Tooltip("Global alpha applies to everything in ImGui.")]
         public float Alpha;
 
@@ -108,7 +109,7 @@ namespace ImGuiNET.Unity
         public float CurveTessellationTol;
 
         [Tooltip("Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.")]
-        public float CircleSegmentMaxError;
+        public float CircleTessellationMaxError;
 
         [HideInInspector]
         public Color[] Colors = new Color[(int)ImGuiCol.COUNT];
@@ -116,22 +117,22 @@ namespace ImGuiNET.Unity
         public unsafe void ApplyTo(ImGuiStylePtr s)
         {
             s.Alpha                  = Alpha;
-            s.WindowPadding          = WindowPadding;
+            s.WindowPadding          = WindowPadding.ToNumerics();
             s.WindowRounding         = WindowRounding;
             s.WindowBorderSize       = WindowBorderSize;
-            s.WindowMinSize          = WindowMinSize;
-            s.WindowTitleAlign       = WindowTitleAlign;
+            s.WindowMinSize          = WindowMinSize.ToNumerics();
+            s.WindowTitleAlign       = WindowTitleAlign.ToNumerics();
             s.WindowMenuButtonPosition = WindowMenuButtonPosition;
             s.ChildRounding          = ChildRounding;
             s.ChildBorderSize        = ChildBorderSize;
             s.PopupRounding          = PopupRounding;
             s.PopupBorderSize        = PopupBorderSize;
-            s.FramePadding           = FramePadding;
+            s.FramePadding           = FramePadding.ToNumerics();
             s.FrameRounding          = FrameRounding;
             s.FrameBorderSize        = FrameBorderSize;
-            s.ItemSpacing            = ItemSpacing;
-            s.ItemInnerSpacing       = ItemInnerSpacing;
-            s.TouchExtraPadding      = TouchExtraPadding;
+            s.ItemSpacing            = ItemSpacing.ToNumerics();
+            s.ItemInnerSpacing       = ItemInnerSpacing.ToNumerics();
+            s.TouchExtraPadding      = TouchExtraPadding.ToNumerics();
             s.IndentSpacing          = IndentSpacing;
             s.ColumnsMinSpacing      = ColumnsMinSpacing;
             s.ScrollbarSize          = ScrollbarSize;
@@ -141,38 +142,38 @@ namespace ImGuiNET.Unity
             s.TabRounding            = TabRounding;
             s.TabBorderSize          = TabBorderSize;
             s.ColorButtonPosition    = ColorButtonPosition;
-            s.ButtonTextAlign        = ButtonTextAlign;
-            s.SelectableTextAlign    = SelectableTextAlign;
-            s.DisplayWindowPadding   = DisplayWindowPadding;
-            s.DisplaySafeAreaPadding = DisplaySafeAreaPadding;
+            s.ButtonTextAlign        = ButtonTextAlign.ToNumerics();
+            s.SelectableTextAlign    = SelectableTextAlign.ToNumerics();
+            s.DisplayWindowPadding   = DisplayWindowPadding.ToNumerics();
+            s.DisplaySafeAreaPadding = DisplaySafeAreaPadding.ToNumerics();
             s.MouseCursorScale       = MouseCursorScale;
             s.AntiAliasedLines       = AntiAliasedLines;
             s.AntiAliasedFill        = AntiAliasedFill;
             s.CurveTessellationTol   = CurveTessellationTol;
-            s.CircleSegmentMaxError  = CircleSegmentMaxError;
+            s.CircleTessellationMaxError  = CircleTessellationMaxError;
             for (var i = 0; i < Colors.Length; ++i)
-                s.Colors[i] = Colors[i];
+                s.Colors[i] = Colors[i].ToNumerics();
         }
 
         public unsafe void SetFrom(ImGuiStylePtr s)
         {
             Alpha                  = s.Alpha;
-            WindowPadding          = s.WindowPadding;
+            WindowPadding          = s.WindowPadding.ToUnity();
             WindowRounding         = s.WindowRounding;
             WindowBorderSize       = s.WindowBorderSize;
-            WindowMinSize          = s.WindowMinSize;
-            WindowTitleAlign       = s.WindowTitleAlign;
+            WindowMinSize          = s.WindowMinSize.ToUnity();
+            WindowTitleAlign       = s.WindowTitleAlign.ToUnity();
             WindowMenuButtonPosition = s.WindowMenuButtonPosition;
             ChildRounding          = s.ChildRounding;
             ChildBorderSize        = s.ChildBorderSize;
             PopupRounding          = s.PopupRounding;
             PopupBorderSize        = s.PopupBorderSize;
-            FramePadding           = s.FramePadding;
+            FramePadding           = s.FramePadding.ToUnity();
             FrameRounding          = s.FrameRounding;
             FrameBorderSize        = s.FrameBorderSize;
-            ItemSpacing            = s.ItemSpacing;
-            ItemInnerSpacing       = s.ItemInnerSpacing;
-            TouchExtraPadding      = s.TouchExtraPadding;
+            ItemSpacing            = s.ItemSpacing.ToUnity();
+            ItemInnerSpacing       = s.ItemInnerSpacing.ToUnity();
+            TouchExtraPadding      = s.TouchExtraPadding.ToUnity();
             IndentSpacing          = s.IndentSpacing;
             ColumnsMinSpacing      = s.ColumnsMinSpacing;
             ScrollbarSize          = s.ScrollbarSize;
@@ -182,17 +183,17 @@ namespace ImGuiNET.Unity
             TabRounding            = s.TabRounding;
             TabBorderSize          = s.TabBorderSize;
             ColorButtonPosition    = s.ColorButtonPosition;
-            ButtonTextAlign        = s.ButtonTextAlign;
-            SelectableTextAlign    = s.SelectableTextAlign;
-            DisplayWindowPadding   = s.DisplayWindowPadding;
-            DisplaySafeAreaPadding = s.DisplaySafeAreaPadding;
+            ButtonTextAlign        = s.ButtonTextAlign.ToUnity();
+            SelectableTextAlign    = s.SelectableTextAlign.ToUnity();
+            DisplayWindowPadding   = s.DisplayWindowPadding.ToUnity();
+            DisplaySafeAreaPadding = s.DisplaySafeAreaPadding.ToUnity();
             MouseCursorScale       = s.MouseCursorScale;
             AntiAliasedLines       = s.AntiAliasedLines;
             AntiAliasedFill        = s.AntiAliasedFill;
             CurveTessellationTol   = s.CurveTessellationTol;
-            CircleSegmentMaxError  = s.CircleSegmentMaxError;
+            CircleTessellationMaxError  = s.CircleTessellationMaxError;
             for (var i = 0; i < Colors.Length; ++i)
-                Colors[i] = s.Colors[i];
+                Colors[i] = s.Colors[i].ToUnityColor();
         }
 
         void Reset()

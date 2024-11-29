@@ -4,15 +4,17 @@ namespace ImGuiNET
     public enum ImGuiDragDropFlags
     {
         None = 0,
-        SourceNoPreviewTooltip = 1 << 0,
-        SourceNoDisableHover = 1 << 1,
-        SourceNoHoldToOpenOthers = 1 << 2,
-        SourceAllowNullID = 1 << 3,
-        SourceExtern = 1 << 4,
-        SourceAutoExpirePayload = 1 << 5,
-        AcceptBeforeDelivery = 1 << 10,
-        AcceptNoDrawDefaultRect = 1 << 11,
-        AcceptNoPreviewTooltip = 1 << 12,
-        AcceptPeekOnly = AcceptBeforeDelivery | AcceptNoDrawDefaultRect,
+        SourceNoPreviewTooltip = 1,
+        SourceNoDisableHover = 2,
+        SourceNoHoldToOpenOthers = 4,
+        SourceAllowNullID = 8,
+        SourceExtern = 16,
+        PayloadAutoExpire = 32,
+        PayloadNoCrossContext = 64,
+        PayloadNoCrossProcess = 128,
+        AcceptBeforeDelivery = 1024,
+        AcceptNoDrawDefaultRect = 2048,
+        AcceptNoPreviewTooltip = 4096,
+        AcceptPeekOnly = 3072,
     }
 }

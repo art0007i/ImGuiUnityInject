@@ -5,6 +5,7 @@ namespace ImGuiNET.Unity
     [System.Serializable]
     public struct IOConfig
     {
+        // TODO: double check we have everything https://github.com/ocornut/imgui/blob/master/imgui.h#L2228
         [Tooltip("Enable keyboard navigation.")]
         public bool KeyboardNavigation;
 
@@ -74,7 +75,7 @@ namespace ImGuiNET.Unity
             io.ConfigInputTextCursorBlink = TextCursorBlink;
             io.ConfigWindowsResizeFromEdges = ResizeFromEdges;
             io.ConfigWindowsMoveFromTitleBarOnly = MoveFromTitleOnly;
-            io.ConfigWindowsMemoryCompactTimer = MemoryCompactTimer;
+            io.ConfigMemoryCompactTimer = MemoryCompactTimer;
         }
 
         public void SetFrom(ImGuiIOPtr io)
@@ -93,7 +94,7 @@ namespace ImGuiNET.Unity
             TextCursorBlink = io.ConfigInputTextCursorBlink;
             ResizeFromEdges = io.ConfigWindowsResizeFromEdges;
             MoveFromTitleOnly = io.ConfigWindowsMoveFromTitleBarOnly;
-            MemoryCompactTimer = io.ConfigWindowsMemoryCompactTimer;
+            MemoryCompactTimer = io.ConfigMemoryCompactTimer;
         }
     }
 }

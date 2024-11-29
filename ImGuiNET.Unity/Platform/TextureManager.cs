@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using ImGuiNET;
+using System.Runtime.InteropServices;
 
 namespace ImGuiNET.Unity
 {
@@ -75,7 +76,7 @@ namespace ImGuiNET.Unity
                 return IntPtr.Zero;
 
             int byteCount = sizeof(ushort) * (values.Count + 1); // terminating zero
-            var ranges = (ushort*)Util.Allocate(byteCount);
+            var ranges = (ushort*)(void*)Marshal.AllocHGlobal(byteCount);
             _allocatedGlyphRangeArrays.Add((IntPtr)ranges);
             for (var i = 0; i < values.Count; ++i)
                 ranges[i] = values[i];
@@ -86,7 +87,7 @@ namespace ImGuiNET.Unity
         unsafe void FreeGlyphRangeArrays()
         {
             foreach (var range in _allocatedGlyphRangeArrays)
-                Util.Free((byte*)range);
+                Marshal.FreeHGlobal(range);
             _allocatedGlyphRangeArrays.Clear();
         }
 
@@ -135,6 +136,7 @@ namespace ImGuiNET.Unity
                 case FontRasterizerType.StbTrueType:
                     io.Fonts.Build();
                     break;
+                    // TOOD: FIX FREETYPE I GUESS
 #if IMGUI_FEATURE_FREETYPE
                 case FontRasterizerType.FreeType:
                     ImFreetype.BuildFontAtlas(io.Fonts, (ImFreetype.RasterizerFlags)settings.RasterizerFlags);
