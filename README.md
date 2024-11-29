@@ -41,3 +41,15 @@ ImGuiInstance.GetOrCreate(
     ImGui.End();
 };
 ```
+
+# Building instructions
+
+1. Copy all the necessary dlls from any game or unity install to ./ManagedLibs, currently this is
+    - UnityEngine.dll
+    - UnityEngine.CoreModule.dll
+    - UnityEngine.IMGUIModule.dll
+    - Unity.InputSystem.dll
+    - UnityEngine.InputLegacyModule.dll
+    - UnityEngine.AssetBundleModule.dll
+    - System.Runtime.CompilerServices.Unsafe.dll
+2. The project should now build. You can try it with the dotnet CLI using `dotnet build`
