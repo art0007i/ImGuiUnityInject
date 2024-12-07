@@ -104,8 +104,6 @@ sealed class ImGuiPlatformInputSystem : IImGuiPlatform
     {
         if (_keyboard != null)
         {
-            //for (int i = 0; i < (int)ImGuiKey.COUNT; ++i)
-            //    io.KeyMap[i] = -1;
             _keyboard.onTextInput -= (c) => io.AddInputCharacter(c);
         }
         _keyboard = kb;
@@ -124,6 +122,11 @@ sealed class ImGuiPlatformInputSystem : IImGuiPlatform
                 io.AddKeyEvent(imguikey, keyboard[key].isPressed);
             }
         }
+
+        io.AddKeyEvent(ImGuiKey.ModShift, keyboard[Key.LeftShift].isPressed || keyboard[Key.RightShift].isPressed);
+        io.AddKeyEvent(ImGuiKey.ModCtrl, keyboard[Key.LeftCtrl].isPressed || keyboard[Key.RightCtrl].isPressed);
+        io.AddKeyEvent(ImGuiKey.ModAlt, keyboard[Key.LeftAlt].isPressed || keyboard[Key.RightAlt].isPressed);
+        io.AddKeyEvent(ImGuiKey.ModSuper, keyboard[Key.LeftMeta].isPressed || keyboard[Key.RightMeta].isPressed);
     }
 
     static void UpdateMouse(ImGuiIOPtr io, Mouse mouse)
@@ -132,7 +135,7 @@ sealed class ImGuiPlatformInputSystem : IImGuiPlatform
             return;
 
         if (io.WantSetMousePos) // set Unity mouse position if requested
-            mouse.WarpCursorPosition(ImGuiUn.ImGuiToScreen(io.MousePos));
+            mouse.WarpCursorPosition(io.MousePos.ToUnity());
 
         Vector2 mouseScroll = mouse.scroll.ReadValue() / 120f;
         var pos = ImGuiUn.ScreenToImGui(mouse.position.ReadValue());
@@ -234,23 +237,15 @@ sealed class ImGuiPlatformInputSystem : IImGuiPlatform
             >= Key.A and <= Key.Z => ImGuiKey.A + (key - Key.A),
             >= Key.Digit1 and <= Key.Digit9 => ImGuiKey._1 + (key - Key.Digit1),
             Key.Digit0 => ImGuiKey._0,
-            Key.LeftShift => ImGuiKey.ModShift,
-            Key.RightShift => ImGuiKey.ModShift,
-            // Key.LeftShift => ImGuiKey.LeftShift,  // Map to actual shift keys?
-            // Key.RightShift => ImGuiKey.RightShift,
-            Key.LeftAlt => ImGuiKey.ModAlt,
-            Key.RightAlt => ImGuiKey.ModAlt,
-            // Key.LeftAlt => ImGuiKey.LeftAlt,
-            // Key.RightAlt => ImGuiKey.RightAlt,
+            Key.LeftShift => ImGuiKey.LeftShift,  // Map to actual shift keys?
+            Key.RightShift => ImGuiKey.RightShift,
+            Key.LeftAlt => ImGuiKey.LeftAlt,
+            Key.RightAlt => ImGuiKey.RightAlt,
             // Key.AltGr // no one likes u alt gr
-            Key.LeftCtrl => ImGuiKey.ModCtrl,
-            Key.RightCtrl => ImGuiKey.ModCtrl,
-            // Key.LeftCtrl => ImGuiKey.LeftCtrl,
-            // Key.RightCtrl => ImGuiKey.RightCtrl,
-            Key.LeftMeta => ImGuiKey.ModSuper,
-            Key.RightMeta => ImGuiKey.ModSuper,
-            // Key.LeftMeta => ImGuiKey.LeftSuper,
-            // Key.RightMeta => ImGuiKey.RightSuper,
+            Key.LeftCtrl => ImGuiKey.LeftCtrl,
+            Key.RightCtrl => ImGuiKey.RightCtrl,
+            Key.LeftMeta => ImGuiKey.LeftSuper,
+            Key.RightMeta => ImGuiKey.RightSuper,
             Key.ContextMenu => ImGuiKey.Menu,
             Key.Escape => ImGuiKey.Escape,
             Key.LeftArrow => ImGuiKey.LeftArrow,
