@@ -1,7 +1,6 @@
 ﻿using ImGuiNET.Unity;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace ImGuiUnityInject;
@@ -48,7 +47,7 @@ public class ImGuiInstance
             instance._imGui = gui;
 
             gui.Layout += instance.Layout;
-            
+
             if(onReady != null) onReady(gui, true);
             else gui.enabled = true;
             if(instance._imGuiAvailable != null) instance._imGuiAvailable(gui);
