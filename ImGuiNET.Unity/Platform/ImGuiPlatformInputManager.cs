@@ -50,7 +50,6 @@ namespace ImGuiNET.Unity
             // io.BackendFlags |= ImGuiBackendFlags.HasGamepad;                 // set by UpdateGamepad()
 
             _callbacks.Assign(io);                                              // assign platform callbacks
-            io.ClipboardUserData = IntPtr.Zero;
 
             if (_iniSettings != null)                                           // ini settings
             {

@@ -148,6 +148,19 @@ namespace ImGuiNET.Unity
 
             ImGuiUn.SetUnityContext(_context);
             ImGuiIOPtr io = ImGui.GetIO();
+            
+            if ((io.ConfigFlags & ImGuiConfigFlags.DockingEnable) == 0)
+            {
+                io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+            }
+
+            if ((io.ConfigFlags & ImGuiConfigFlags.NoMouseCursorChange) == 0)
+            {
+                io.ConfigFlags |= ImGuiConfigFlags.NoMouseCursorChange;
+            }
+            
+            io.ConfigErrorRecoveryEnableAssert = false;
+            io.ConfigErrorRecoveryEnableDebugLog = false;
 
             _initialConfiguration.ApplyTo(io);
             _style?.ApplyTo(ImGui.GetStyle());

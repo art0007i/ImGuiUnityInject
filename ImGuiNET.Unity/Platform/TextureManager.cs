@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -99,7 +100,26 @@ namespace ImGuiNET.Unity
             // don't add cursors if not drawing them
             if (!io.MouseDrawCursor)
                 io.Fonts.Flags |= ImFontAtlasFlags.NoMouseCursors;
+            
+            // load custom fonts
+            var customFontPath = System.IO.Path.Combine(Application.streamingAssetsPath, "ImGuiFonts");
+            if (!System.IO.Directory.Exists(customFontPath))
+            {
+                System.IO.Directory.CreateDirectory(customFontPath);
+            }
+            
+            foreach (var fontDefinition in Directory.GetFiles(customFontPath))
+            {
+                var fontPath = System.IO.Path.Combine(customFontPath, fontDefinition);
+                if (!System.IO.File.Exists(fontPath))
+                {
+                    Debug.Log($"Font file not found: {fontPath}");
+                    continue;
+                }
 
+                io.Fonts.AddFontFromFileTTF(fontPath, 16f);
+            }
+            
             // no font config asset: use defaults
             if (settings == null)
             {
