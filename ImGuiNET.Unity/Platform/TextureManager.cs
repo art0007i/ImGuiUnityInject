@@ -101,25 +101,6 @@ namespace ImGuiNET.Unity
             if (!io.MouseDrawCursor)
                 io.Fonts.Flags |= ImFontAtlasFlags.NoMouseCursors;
             
-            // load custom fonts
-            var customFontPath = System.IO.Path.Combine(Application.streamingAssetsPath, "ImGuiFonts");
-            if (!System.IO.Directory.Exists(customFontPath))
-            {
-                System.IO.Directory.CreateDirectory(customFontPath);
-            }
-            
-            foreach (var fontDefinition in Directory.GetFiles(customFontPath))
-            {
-                var fontPath = System.IO.Path.Combine(customFontPath, fontDefinition);
-                if (!System.IO.File.Exists(fontPath))
-                {
-                    Debug.Log($"Font file not found: {fontPath}");
-                    continue;
-                }
-
-                io.Fonts.AddFontFromFileTTF(fontPath, 16f);
-            }
-            
             // no font config asset: use defaults
             if (settings == null)
             {
@@ -131,8 +112,8 @@ namespace ImGuiNET.Unity
             // add fonts from config asset
             foreach (var fontDefinition in settings.Fonts)
             {
-                var fontPath = System.IO.Path.Combine(Application.streamingAssetsPath, fontDefinition.FontPath);
-                if (!System.IO.File.Exists(fontPath))
+                var fontPath = Path.Combine(Application.streamingAssetsPath, fontDefinition.FontPath);
+                if (!File.Exists(fontPath))
                 {
                     Debug.Log($"Font file not found: {fontPath}");
                     continue;

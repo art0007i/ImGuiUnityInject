@@ -48,7 +48,7 @@ namespace ImGuiNET.Unity
         CommandBuffer _cmd;
         bool _usingURP;
 
-        public event System.Action Layout;  // Layout event for *this* ImGui instance
+        public event Action Layout;  // Layout event for *this* ImGui instance
         public bool _doGlobalLayout = true; // do global/default Layout event too
 
         public Camera _camera = null;
@@ -177,7 +177,7 @@ namespace ImGuiNET.Unity
             {
                 OnDisable();
                 enabled = false;
-                throw new System.Exception($"Failed to start: {reason}");
+                throw new Exception($"Failed to start: {reason}");
             }
         }
 
