@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -99,7 +100,7 @@ namespace ImGuiNET.Unity
             // don't add cursors if not drawing them
             if (!io.MouseDrawCursor)
                 io.Fonts.Flags |= ImFontAtlasFlags.NoMouseCursors;
-
+            
             // no font config asset: use defaults
             if (settings == null)
             {
@@ -111,8 +112,8 @@ namespace ImGuiNET.Unity
             // add fonts from config asset
             foreach (var fontDefinition in settings.Fonts)
             {
-                var fontPath = System.IO.Path.Combine(Application.streamingAssetsPath, fontDefinition.FontPath);
-                if (!System.IO.File.Exists(fontPath))
+                var fontPath = Path.Combine(Application.streamingAssetsPath, fontDefinition.FontPath);
+                if (!File.Exists(fontPath))
                 {
                     Debug.Log($"Font file not found: {fontPath}");
                     continue;

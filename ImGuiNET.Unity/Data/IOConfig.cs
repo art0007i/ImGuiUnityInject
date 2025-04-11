@@ -12,12 +12,6 @@ namespace ImGuiNET.Unity
         [Tooltip("Enable gamepad navigation.")]
         public bool GamepadNavigation;
 
-        [Tooltip("Instruct navigation to move the move the mouse cursor.")]
-        public bool NavSetMousePos;
-
-        [Tooltip("Instruct navigation to not set the io.WantCaptureKeyboard when io.NavActive is set.")]
-        public bool NavNoCaptureKeyboard;
-
         [Tooltip("Time for a double-click, in seconds.")]
         public float DoubleClickTime;
 
@@ -63,8 +57,6 @@ namespace ImGuiNET.Unity
         {
             io.ConfigFlags = KeyboardNavigation ? io.ConfigFlags | ImGuiConfigFlags.NavEnableKeyboard : io.ConfigFlags & ~ImGuiConfigFlags.NavEnableKeyboard;
             io.ConfigFlags = GamepadNavigation ? io.ConfigFlags | ImGuiConfigFlags.NavEnableGamepad : io.ConfigFlags & ~ImGuiConfigFlags.NavEnableGamepad;
-            io.ConfigFlags = NavSetMousePos ? io.ConfigFlags | ImGuiConfigFlags.NavEnableSetMousePos : io.ConfigFlags & ~ImGuiConfigFlags.NavEnableSetMousePos;
-            io.ConfigFlags = NavNoCaptureKeyboard ? io.ConfigFlags | ImGuiConfigFlags.NavNoCaptureKeyboard : io.ConfigFlags & ~ImGuiConfigFlags.NavNoCaptureKeyboard;
             io.MouseDoubleClickTime = DoubleClickTime;
             io.MouseDoubleClickMaxDist = DoubleClickMaxDist;
             io.MouseDragThreshold = DragThreshold;
@@ -82,8 +74,6 @@ namespace ImGuiNET.Unity
         {
             KeyboardNavigation = (io.ConfigFlags & ImGuiConfigFlags.NavEnableKeyboard) != 0;
             GamepadNavigation = (io.ConfigFlags & ImGuiConfigFlags.NavEnableGamepad) != 0;
-            NavSetMousePos = (io.ConfigFlags & ImGuiConfigFlags.NavEnableSetMousePos) != 0;
-            NavNoCaptureKeyboard = (io.ConfigFlags & ImGuiConfigFlags.NavNoCaptureKeyboard) != 0;
             DoubleClickTime = io.MouseDoubleClickTime;
             DoubleClickMaxDist = io.MouseDoubleClickMaxDist;
             DragThreshold = io.MouseDragThreshold;

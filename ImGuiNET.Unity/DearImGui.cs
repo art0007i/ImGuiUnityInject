@@ -48,7 +48,7 @@ namespace ImGuiNET.Unity
         CommandBuffer _cmd;
         bool _usingURP;
 
-        public event System.Action Layout;  // Layout event for *this* ImGui instance
+        public event Action Layout;  // Layout event for *this* ImGui instance
         public bool _doGlobalLayout = true; // do global/default Layout event too
 
         public Camera _camera = null;
@@ -148,6 +148,19 @@ namespace ImGuiNET.Unity
 
             ImGuiUn.SetUnityContext(_context);
             ImGuiIOPtr io = ImGui.GetIO();
+            
+            if ((io.ConfigFlags & ImGuiConfigFlags.DockingEnable) == 0)
+            {
+                io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+            }
+
+            if ((io.ConfigFlags & ImGuiConfigFlags.NoMouseCursorChange) == 0)
+            {
+                io.ConfigFlags |= ImGuiConfigFlags.NoMouseCursorChange;
+            }
+            
+            io.ConfigErrorRecoveryEnableAssert = false;
+            io.ConfigErrorRecoveryEnableDebugLog = false;
 
             _initialConfiguration.ApplyTo(io);
             _style?.ApplyTo(ImGui.GetStyle());
@@ -164,7 +177,7 @@ namespace ImGuiNET.Unity
             {
                 OnDisable();
                 enabled = false;
-                throw new System.Exception($"Failed to start: {reason}");
+                throw new Exception($"Failed to start: {reason}");
             }
         }
 

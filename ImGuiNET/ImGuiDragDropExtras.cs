@@ -14,13 +14,13 @@ public static partial class ImGui
     where T : unmanaged
     {
         void* ptr = Unsafe.AsPointer(ref data);
-        ImGui.SetDragDropPayload(type, new IntPtr(ptr), (uint)Unsafe.SizeOf<T>(), cond);
+        SetDragDropPayload(type, new IntPtr(ptr), (uint)Unsafe.SizeOf<T>(), cond);
     }
 
     public static unsafe bool AcceptDragDropPayload<T>(string type, out T payload, ImGuiDragDropFlags flags = ImGuiDragDropFlags.None)
     where T : unmanaged
     {
-        ImGuiPayload* pload = ImGui.AcceptDragDropPayload(type, flags);
+        ImGuiPayload* pload = AcceptDragDropPayload(type, flags);
         payload = (pload != null) ? Unsafe.Read<T>(pload->Data) : default;
         return pload != null;
     }
@@ -33,13 +33,13 @@ public static partial class ImGui
             byte* bytes = stackalloc byte[byteCount];
             Encoding.Default.GetBytes(chars, data.Length, bytes, byteCount);
 
-            ImGui.SetDragDropPayload(type, new IntPtr(bytes), (uint)byteCount, cond);
+            SetDragDropPayload(type, new IntPtr(bytes), (uint)byteCount, cond);
         }
     }
 
     public static unsafe bool AcceptDragDropPayload(string type, out string payload, ImGuiDragDropFlags flags = ImGuiDragDropFlags.None)
     {
-        ImGuiPayload* pload = ImGui.AcceptDragDropPayload(type, flags);
+        ImGuiPayload* pload = AcceptDragDropPayload(type, flags);
         payload = (pload != null) ? Encoding.Default.GetString((byte*)pload->Data, pload->DataSize) : null;
         return pload != null;
     }
