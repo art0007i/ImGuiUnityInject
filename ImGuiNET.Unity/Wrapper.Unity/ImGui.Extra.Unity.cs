@@ -8,15 +8,15 @@ namespace ImGuiNET
     {
         // convert from ImGui coordinates (origin at top left) to unity's screen coordinates (origin at bottom left)
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 ScreenToImGui(in Vector2 point)
+        public static System.Numerics.Vector2 ScreenToImGui(in Vector2 point)
         {
-            return new Vector2(point.x, ImGui.GetIO().DisplaySize.y - point.y);
+            return new System.Numerics.Vector2(point.x, ImGui.GetIO().DisplaySize.Y - point.y);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 ImGuiToScreen(in Vector2 point)
+        public static Vector2 ImGuiToScreen(in System.Numerics.Vector2 point)
         {
-            return new Vector2(point.x, ImGui.GetIO().DisplaySize.y - point.y);
+            return new Vector2(point.X, ImGui.GetIO().DisplaySize.Y - point.Y);
         }
     }
 }

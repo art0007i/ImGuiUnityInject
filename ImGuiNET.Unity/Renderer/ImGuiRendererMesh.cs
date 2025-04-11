@@ -63,7 +63,7 @@ namespace ImGuiNET.Unity
 
         public void RenderDrawLists(CommandBuffer cmd, ImDrawDataPtr drawData)
         {
-            Vector2 fbSize = drawData.DisplaySize * drawData.FramebufferScale;
+            Vector2 fbSize = (drawData.DisplaySize * drawData.FramebufferScale).ToUnity();
             if (fbSize.x <= 0f || fbSize.y <= 0f || drawData.TotalVtxCount == 0)
                 return; // avoid rendering when minimized
 
@@ -82,7 +82,7 @@ namespace ImGuiNET.Unity
         {
             int subMeshCount = 0; // nr of submeshes is the same as the nr of ImDrawCmd
             for (int n = 0, nMax = drawData.CmdListsCount; n < nMax; ++n)
-                subMeshCount += drawData.CmdListsRange[n].CmdBuffer.Size;
+                subMeshCount += drawData.CmdLists[n].CmdBuffer.Size;
 
             // set mesh structure
             if (_prevSubMeshCount != subMeshCount)
@@ -99,7 +99,7 @@ namespace ImGuiNET.Unity
             int subOf = 0;
             for (int n = 0, nMax = drawData.CmdListsCount; n < nMax; ++n)
             {
-                ImDrawListPtr drawList = drawData.CmdListsRange[n];
+                ImDrawListPtr drawList = drawData.CmdLists[n];
                 NativeArray<ImDrawVert> vtxArray = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<ImDrawVert>(
                     (void*)drawList.VtxBuffer.Data, drawList.VtxBuffer.Size, Allocator.None);
                 NativeArray<ushort>     idxArray = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<ushort>(
@@ -135,8 +135,8 @@ namespace ImGuiNET.Unity
         void CreateDrawCommands(CommandBuffer cmd, ImDrawDataPtr drawData, Vector2 fbSize)
         {
             var prevTextureId = System.IntPtr.Zero;
-            var clipOffst = new Vector4(drawData.DisplayPos.x, drawData.DisplayPos.y, drawData.DisplayPos.x, drawData.DisplayPos.y);
-            var clipScale = new Vector4(drawData.FramebufferScale.x, drawData.FramebufferScale.y, drawData.FramebufferScale.x, drawData.FramebufferScale.y);
+            var clipOffst = new Vector4(drawData.DisplayPos.X, drawData.DisplayPos.Y, drawData.DisplayPos.X, drawData.DisplayPos.Y);
+            var clipScale = new Vector4(drawData.FramebufferScale.X, drawData.FramebufferScale.Y, drawData.FramebufferScale.X, drawData.FramebufferScale.Y);
 
             cmd.SetViewport(new Rect(0f, 0f, fbSize.x, fbSize.y));
             cmd.SetViewProjectionMatrices(
@@ -146,14 +146,14 @@ namespace ImGuiNET.Unity
             int subOf = 0;
             for (int n = 0, nMax = drawData.CmdListsCount; n < nMax; ++n)
             {
-                ImDrawListPtr drawList = drawData.CmdListsRange[n];
+                ImDrawListPtr drawList = drawData.CmdLists[n];
                 for (int i = 0, iMax = drawList.CmdBuffer.Size; i < iMax; ++i, ++subOf)
                 {
                     ImDrawCmdPtr drawCmd = drawList.CmdBuffer[i];
                     // TODO: user callback in drawCmd.UserCallback & drawCmd.UserCallbackData
 
                     // project scissor rectangle into framebuffer space and skip if fully outside
-                    var clip = Vector4.Scale(drawCmd.ClipRect - clipOffst, clipScale);
+                    var clip = Vector4.Scale(drawCmd.ClipRect.ToUnity() - clipOffst, clipScale);
                     if (clip.x >= fbSize.x || clip.y >= fbSize.y || clip.z < 0f || clip.w < 0f) continue;
 
                     if (prevTextureId != drawCmd.TextureId)

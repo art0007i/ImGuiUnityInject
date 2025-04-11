@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using ImGuiNET;
+using System.Runtime.InteropServices;
 
 namespace ImGuiNET.Unity
 {
@@ -75,7 +77,7 @@ namespace ImGuiNET.Unity
                 return IntPtr.Zero;
 
             int byteCount = sizeof(ushort) * (values.Count + 1); // terminating zero
-            var ranges = (ushort*)Util.Allocate(byteCount);
+            var ranges = (ushort*)(void*)Marshal.AllocHGlobal(byteCount);
             _allocatedGlyphRangeArrays.Add((IntPtr)ranges);
             for (var i = 0; i < values.Count; ++i)
                 ranges[i] = values[i];
@@ -86,7 +88,7 @@ namespace ImGuiNET.Unity
         unsafe void FreeGlyphRangeArrays()
         {
             foreach (var range in _allocatedGlyphRangeArrays)
-                Util.Free((byte*)range);
+                Marshal.FreeHGlobal(range);
             _allocatedGlyphRangeArrays.Clear();
         }
 
@@ -98,7 +100,7 @@ namespace ImGuiNET.Unity
             // don't add cursors if not drawing them
             if (!io.MouseDrawCursor)
                 io.Fonts.Flags |= ImFontAtlasFlags.NoMouseCursors;
-
+            
             // no font config asset: use defaults
             if (settings == null)
             {
@@ -110,8 +112,8 @@ namespace ImGuiNET.Unity
             // add fonts from config asset
             foreach (var fontDefinition in settings.Fonts)
             {
-                var fontPath = System.IO.Path.Combine(Application.streamingAssetsPath, fontDefinition.FontPath);
-                if (!System.IO.File.Exists(fontPath))
+                var fontPath = Path.Combine(Application.streamingAssetsPath, fontDefinition.FontPath);
+                if (!File.Exists(fontPath))
                 {
                     Debug.Log($"Font file not found: {fontPath}");
                     continue;
@@ -135,6 +137,7 @@ namespace ImGuiNET.Unity
                 case FontRasterizerType.StbTrueType:
                     io.Fonts.Build();
                     break;
+                    // TOOD: FIX FREETYPE I GUESS
 #if IMGUI_FEATURE_FREETYPE
                 case FontRasterizerType.FreeType:
                     ImFreetype.BuildFontAtlas(io.Fonts, (ImFreetype.RasterizerFlags)settings.RasterizerFlags);
